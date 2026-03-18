@@ -6,59 +6,54 @@ topics: [claude-code, git, git-worktree, gwq]
 published: false
 ---
 
+## tl;dr
+
+`.agents/` の実体を `~/.project-agents-dir/{org}/{repo}/` に集約し、各 worktree からは symlink で参照するようにした。これを git hook と Claude Code hook で自動化した。
+
+## 環境
+
+- Claude Code 2.1.78
+- git 2.43.0
+- [gwq](https://github.com/d-kuro/gwq) 0.0.15
+
 ## 課題
 
-Claude Code でマルチエージェント開発をしていると、プロジェクトルートに `.agents/` というディレクトリが育っていく。ここにはワークスペースの記録、計画ファイル、一時ファイルなどが入る。
+自分は Claude Code のマルチエージェント開発時に `.agents/` へワークスペースの記録や計画ファイルを集約するようにしている。plan ファイルも `plansDirectory` で `.agents/plans/` に向けている。
+
+これは単一ブランチなら問題ないが、git worktree を使い始めると worktree ごとに `.agents/` が分散するし、worktree を消せばデータも消える。`.agents/` はタスクをまたいで共有したい場所なので、これでは困る。
+
+## 全体構成
+
+`.agents/` の実体を `~/.project-agents-dir/{org}/{repo}/` に置き、プロジェクトルートには symlink だけ残す。`{org}/{repo}` は `git remote get-url origin` から抽出するので、同じリポジトリならどの worktree からでも同じデータを参照する。
 
 ```
-my-project/
-├── .agents/
-│   ├── workspaces/
-│   ├── plans/
-│   └── tmp/
-├── src/
-└── ...
-```
+~/.claude/
+├── hooks/
+│   ├── project-agents-link.sh   ← 共通ロジック（org/repo 抽出 + symlink 作成）
+│   └── worktree-create.sh       ← Claude Code の WorktreeCreate hook
+└── settings.json                ← worktree-create.sh の登録
 
-これは単一ブランチで作業しているうちは問題ないが、**git worktree** を使い始めると破綻する。
+~/.config/git/
+├── hooks/
+│   └── post-checkout            ← git worktree add / clone 時に発火
+└── ignore                       ← .agents/ をグローバルに無視
 
-- worktree ごとに `.agents/` が分散し、ワークスペースの記録がバラバラになる
-- main ブランチを削除したタイミングで `.agents/` のデータも消える
-- worktree を削除すると `.agents/` も一緒に消える
-
-要するに **AI のワークスペースのライフサイクルと、git ブランチのライフサイクルが結合してしまっている** のが問題だ。
-
-## 解決策
-
-`.agents/` の実体をホームディレクトリ配下に置き、プロジェクトルートにはシンボリックリンクだけを残す。
-
-```
 ~/.project-agents-dir/
-└── {org}/
-    └── {repo}/          ← 実体（ブランチ・worktree に依存しない）
-        ├── workspaces/
-        ├── plans/
-        └── tmp/
-
-~/ghq/.../my-project/.agents → ~/.project-agents-dir/org/repo  (symlink)
-~/ghq/.../my-project=feature/.agents → 同上                     (symlink)
+└── {org}/{repo}/                ← .agents/ の実体
 ```
 
-`{org}/{repo}` は `git remote get-url origin` から自動抽出するので、同じリポジトリであればどの worktree からでも同じデータにアクセスできる。
+`post-checkout` と `worktree-create.sh` の両方が `project-agents-link.sh` を source して symlink を張る。`post-checkout` は `core.hooksPath` でグローバル適用、`worktree-create.sh` は Claude Code の `settings.json` から呼ぶ。
 
 ## 実装
 
-3 つのシェルスクリプトで構成される。
+### `project-agents-link.sh`
 
-### 1. 共通ロジック: `project-agents-link.sh`
-
-org/repo の抽出と symlink 作成を行うヘルパー。既存の実ディレクトリがあれば自動で移行する。
+org/repo の抽出と symlink 作成を行う。既存の実ディレクトリがあったので、これは `rsync` で移行した。
 
 ```bash:~/.claude/hooks/project-agents-link.sh
 #!/bin/bash
 PROJECT_AGENTS_BASE="$HOME/.project-agents-dir"
 
-# git remote origin URL から org/repo を抽出
 extract_org_repo() {
     local dir="$1"
     local url
@@ -89,7 +84,6 @@ ensure_project_agents_link() {
         fi
         rm "$agents_link"
     elif [ -d "$agents_link" ]; then
-        # 実ディレクトリが存在 → 中身を移行してからリンク
         echo "Migrating existing .agents/ to $agents_store" >&2
         rsync -a --ignore-existing "$agents_link/" "$agents_store/"
         rm -rf "$agents_link"
@@ -100,15 +94,9 @@ ensure_project_agents_link() {
 }
 ```
 
-ポイント:
+### `post-checkout`
 
-- HTTPS (`https://github.com/org/repo.git`) と SSH (`git@github.com:org/repo.git`) の両方に対応
-- 既存の `.agents/` が実ディレクトリの場合は `rsync --ignore-existing` でマージ移行
-- 既に正しい symlink が張られていれば何もしない（冪等）
-
-### 2. git hook: `post-checkout`
-
-`git worktree add` や `git clone` 時に自動で symlink を作成する。
+`git worktree add` や `git clone` 時に自動で symlink を作る。
 
 ```bash:~/.config/git/hooks/post-checkout
 #!/bin/bash
@@ -121,15 +109,15 @@ ensure_project_agents_link "$(pwd)" 2>/dev/null
 exit 0
 ```
 
-`core.hooksPath` でグローバルに適用するので、リポジトリごとの設定は不要。
+`core.hooksPath` でグローバルに適用する。
 
 ```bash
 git config --global core.hooksPath ~/.config/git/hooks
 ```
 
-### 3. Claude Code hook: `worktree-create.sh`
+### `worktree-create.sh`
 
-Claude Code の `WorktreeCreate` イベントで [gwq](https://github.com/d-kuro/gwq) を使って worktree を作成し、同時に symlink も張る。
+`WorktreeCreate` イベントで [gwq](https://github.com/d-kuro/gwq) による worktree 作成と symlink を同時にやる。
 
 ```bash:~/.claude/hooks/worktree-create.sh
 #!/bin/bash
@@ -155,7 +143,7 @@ ensure_project_agents_link "$WORKTREE_PATH"
 echo "$WORKTREE_PATH"
 ```
 
-Claude Code の `settings.json` に以下を追加:
+`settings.json` に追加:
 
 ```json
 {
@@ -174,47 +162,20 @@ Claude Code の `settings.json` に以下を追加:
 }
 ```
 
-## gitignore
+### gitignore
 
-`.agents/` は git 管理対象外にする。`~/.config/git/ignore` に追加しておけばグローバルに効く。
+`~/.config/git/ignore` に追加してグローバルに無視する。
 
 ```text:~/.config/git/ignore
 .agents/
 ```
 
-## 動作フロー
-
-```mermaid
-graph TD
-    A[git worktree add] -->|post-checkout 発火| B[project-agents-link.sh]
-    C[Claude Code WorktreeCreate] -->|worktree-create.sh| D[gwq add]
-    D --> B
-    E[git clone] -->|post-checkout 発火| B
-    B --> F{.agents の状態}
-    F -->|存在しない| G[mkdir + symlink 作成]
-    F -->|実ディレクトリ| H[rsync で移行 + symlink 作成]
-    F -->|正しい symlink| I[何もしない]
-    F -->|違う symlink| J[張り替え]
-```
-
 ## `core.hooksPath` の罠
 
-最初は `.git/hooks/post-checkout` にフックを配置したが、全く発火しなかった。
-
-原因は `core.hooksPath` がグローバルに設定されていたこと。**`core.hooksPath` が設定されている場合、`.git/hooks/` は完全に無視される。** フックは `core.hooksPath` で指定されたディレクトリのものだけが使われる。
-
-```bash
-# これが設定されていると .git/hooks/ は死ぬ
-git config --global core.hooksPath ~/.config/git/hooks
-```
-
-逆に言えば、`core.hooksPath` にフックを置けばリポジトリごとのインストールは不要で、全リポに一括適用できるという利点がある。
+最初は `.git/hooks/post-checkout` に置いたが発火しなかった。`core.hooksPath` が設定されていると `.git/hooks/` は完全に無視される。逆に `core.hooksPath` に置けば全リポジトリに一括適用できる。
 
 ## まとめ
 
-- `.agents/` の実体を `~/.project-agents-dir/{org}/{repo}/` に集約
-- git の `post-checkout` hook と Claude Code の `WorktreeCreate` hook で自動 symlink
-- `core.hooksPath` でグローバルに適用、リポごとの設定不要
-- 既存の `.agents/` ディレクトリは自動で移行
+symlink 1 本で `.agents/` を worktree から切り離せるようにした。git の `post-checkout` と Claude Code の `WorktreeCreate` で自動化しておけば、あとは何も意識しなくていい。
 
-これにより、**AI ワークスペースのライフサイクルを git ブランチのライフサイクルから完全に分離** できた。worktree を作っても消しても、main ブランチを削除しても、AI が蓄積した知識は `~/.project-agents-dir/` に安全に残り続ける。
+なお Claude Code の `--worktree` オプションではブランチ名を指定できず、ランダムな prefix になってしまう。自分は gwq でブランチ名を制御したいので `WorktreeCreate` hook でカスタムしているが、Claude Code が渡す name 自体がランダムなので根本的な解決にはなっていない。
