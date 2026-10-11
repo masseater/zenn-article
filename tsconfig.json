@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["*.ts"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "overrides": [
+          {
+            "include": ["markdown-lint.ts"],
+            "options": {
+              "allowedUnstableApis": [
+                "effect/process/ChildProcess#make",
+                "effect/process/ChildProcessSpawner#ChildProcessSpawner"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
