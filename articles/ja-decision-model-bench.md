@@ -12,7 +12,11 @@ published: false
 
 decision model 向けのベンチマークとしては Jev Decision Index などがあるのですが、日本語のタスクがありません。日本語で使ったらどうなるのか気になったので、勉強がてらお試しで日本語のベンチマークを作ってみました。
 
+結果の公開サイトはこちらです。
+
 https://mst-ja-decision-bench.masseater.dev
+
+コードはこちらです。
 
 https://github.com/masseater/mst-ja-decision-bench
 
