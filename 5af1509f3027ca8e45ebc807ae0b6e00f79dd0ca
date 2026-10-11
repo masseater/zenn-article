@@ -1,1 +1,6 @@
-記事本文をである調に書き直し、yomiyasu を ::: 修正済みの fork に向けて verify を通した
+Revision history for #3:
+
+rev 2 (content) 2026-10-11 13:08 UTC — 記事本文をである調に書き直し、yomiyasu を ::: 修正済みの fork に向けて verify を通した
+rev 1 (initial) 2026-10-11 13:08 UTC
+
+<!-- mergify-revision-data: {"schema_version":1,"pull_number":3,"entries":[{"number":1,"change_type":"initial","old_sha":null,"new_sha":"02ddbd4b1db590066024f41607440468a90af105","timestamp_iso":"2026-10-11T13:08:10Z","reason":"","replay_sha":null,"compare_url":null},{"number":2,"change_type":"content","old_sha":"02ddbd4b1db590066024f41607440468a90af105","new_sha":"5af1509f3027ca8e45ebc807ae0b6e00f79dd0ca","timestamp_iso":"2026-10-11T13:08:10Z","reason":"記事本文をである調に書き直し、yomiyasu を ::: 修正済みの fork に向けて verify を通した","replay_sha":null,"compare_url":"https://github.com/masseater/zenn-article/compare/02ddbd4b1db590066024f41607440468a90af105...5af1509f3027ca8e45ebc807ae0b6e00f79dd0ca"}]} -->
