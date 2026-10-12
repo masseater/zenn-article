@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "skills": {
+    "effect-ts": {
+      "source": "Effect-TS/skills",
+      "ref": "155c50c911f9c99c294ef8a4461981c5bbe6453e",
+      "sourceType": "github",
+      "skillPath": "skills/effect-ts/SKILL.md",
+      "computedHash": "cb225ba5dda169883dfee680fba6c570c89245ba19242a9bc5c3f2ac8218a55f"
+    },
+    "setup-github": {
+      "source": "./docs/skills/setup-github",
+      "sourceType": "local",
+      "computedHash": "da5efd3926069293d22be153848341ab050519cab6dc40e8f6588d9b72bf5818"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "ref": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "276fb0aadb002ab930cc2a56de89e16995a2e3e70b33587652bf0a5fb123148d"
+    },
+    "typescript-discriminated-unions": {
+      "source": "mkosir/typescript-style-guide",
+      "ref": "170074a0df9b07f4a4a78e3596ec1edf06a14da7",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-discriminated-unions/SKILL.md",
+      "computedHash": "9d78f0a301706ba0becfa780ef9c6a80dee373340a240c4a5f5e59de1d75f370"
+    },
+    "typescript-variables": {
+      "source": "mkosir/typescript-style-guide",
+      "ref": "170074a0df9b07f4a4a78e3596ec1edf06a14da7",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-variables/SKILL.md",
+      "computedHash": "a4f4459aa4c0dd16f8fd43401b76c4e9cb68265a73060d7f184ddb438f911afd"
+    },
+    "verification-before-completion": {
+      "source": "obra/superpowers",
+      "ref": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+      "sourceType": "github",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
+      "computedHash": "b529822bdac4b197b180fe12225cff86b930b65910435103c10622df7f041651"
+    },
+    "yomiyasu": {
+      "source": "masseater/yomiyasu",
+      "ref": "4cbe44416f9d7ec2e6667e20d46c8c78bf7bd19f",
+      "sourceType": "github",
+      "skillPath": "skills/yomiyasu/SKILL.md",
+      "computedHash": "12e87aa7a3c0fab58b1c9d65ba153d943180b2fc00f429a0a0bf28afc4c28e96"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "name": "zenn-article",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "markdown-lint": "node markdown-lint.ts",
+    "renovate": "renovate-config-validator --strict",
+    "fallow": "fallow --skip dupes --quiet --format compact && fallow dead-code --no-production --quiet --format compact && fallow dupes --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "prepare": "vp config && skills experimental_install --force",
+    "new:article": "zenn new:article",
+    "new:book": "zenn new:book",
+    "preview": "zenn preview"
+  },
+  "devDependencies": {
+    "@ast-grep/cli": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@eslint-react/eslint-plugin": "catalog:",
+    "@eslint/config-helpers": "catalog:",
+    "@html-eslint/eslint-plugin-react": "catalog:",
+    "@shadcn/lint": "catalog:",
+    "@tanstack/eslint-plugin-query": "catalog:",
+    "@tanstack/eslint-plugin-router": "catalog:",
+    "@tanstack/eslint-plugin-start": "catalog:",
+    "@tanstack/intent": "catalog:",
+    "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
+    "@types/node": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "effect": "catalog:stack",
+    "eslint": "catalog:",
+    "eslint-plugin-baseline-js": "catalog:",
+    "eslint-plugin-drizzle": "catalog:",
+    "eslint-plugin-no-comments": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "fallow": "catalog:stack",
+    "renovate": "catalog:stack",
+    "skills": "catalog:",
+    "syncpack": "catalog:",
+    "textlint": "catalog:stack",
+    "textlint-filter-rule-allowlist": "catalog:",
+    "textlint-rule-preset-ja-technical-writing": "12.0.2",
+    "vite-plus": "catalog:stack",
+    "zenn-cli": "catalog:"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.10.1",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.0.0"
+  },
+  "intent": {
+    "skills": [
+      "fallow"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "claude-harness",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fallow": "fallow --skip dupes --quiet --format compact && fallow dupes --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "prepare": "effect-tsgo patch --typescript --oxlint"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@yarnpkg/parsers": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/tsgo": "catalog:stack",
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack"
+  }
+}
