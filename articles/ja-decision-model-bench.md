@@ -26,9 +26,7 @@ https://github.com/masseater/mst-ja-decision-bench
 
 decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。2026 年 9 月 15 日に [TypeSafe](https://typesafe.ai) が Jev をリリースしてから世界的なブームになり、各社が色んなモデルを出しています。
 
-自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。
-
-きっかけは、[jev-lint](https://github.com/mizchi/jev-lint)、[jev-pruner](https://github.com/tamaratran/jev-pruner)、[fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)、[jevgrep](https://github.com/dzhng/jevgrep)、自作の [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher) などで Jev を使ってハーネスを作っていたことです。
+自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。その革命に感動し、とりあえず Claude Code のハーネスに Jev を組み込み始めました。[jev-lint](https://github.com/mizchi/jev-lint)、[jev-pruner](https://github.com/tamaratran/jev-pruner)、[fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)、[jevgrep](https://github.com/dzhng/jevgrep) などを入れたり、自作の [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher) を作ったりしています。
 
 その中で、次のようなことがありました。
 
