@@ -28,13 +28,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。
 
-きっかけは、Jev を使ってハーネスを作っていたことです。使っていたのは次のツールです。
-
-- [jev-lint](https://github.com/mizchi/jev-lint): コード規約を Jev で判定する lint
-- [jev-pruner](https://github.com/tamaratran/jev-pruner): 長い Bash 出力を Jev で削ってからモデルに渡す Claude Code プラグイン
-- [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction): 要約の代わりに Jev の判定でコンテキストを削る Claude Code プラグイン
-- [jevgrep](https://github.com/dzhng/jevgrep): Jev でコードを意味的に探す CLI
-- [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher): 自作のハーネス。decision model に Claude Code のツール呼び出しや報告を採点させ、駄目ならフックで差し戻す Claude Code プラグイン
+きっかけは、[jev-lint](https://github.com/mizchi/jev-lint)、[jev-pruner](https://github.com/tamaratran/jev-pruner)、[fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)、[jevgrep](https://github.com/dzhng/jevgrep)、自作の [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher) などで Jev を使ってハーネスを作っていたことです。
 
 その中で、次のようなことがありました。
 
