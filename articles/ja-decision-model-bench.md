@@ -12,7 +12,7 @@ published: false
 
 結果の公開サイトはこちらです。
 
-https://mst-ja-decision-bench.masseater.dev
+https://masseater.dev/decision-bench
 
 コードはこちらです。
 
