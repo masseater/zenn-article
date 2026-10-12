@@ -28,7 +28,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。その革命に感動し、とりあえず Claude Code のハーネスに Jev を組み込み始めました。[jev-lint](https://github.com/mizchi/jev-lint)、[jev-pruner](https://github.com/tamaratran/jev-pruner)、[fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)、[jevgrep](https://github.com/dzhng/jevgrep) などを入れたり、自作の [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher) を作ったりしています。
 
-その中で、次のようなことがありました。
+その中で、
 
 - jev-lint を CI に入れて、コード規約を判定させていた
 - Jev は超激安だと分かってはいたものの、従量課金を使うのは心理的なハードルがあった
