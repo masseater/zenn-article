@@ -26,6 +26,8 @@ https://github.com/masseater/mst-ja-decision-bench
 
 decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。2026 年 9 月 15 日に [TypeSafe](https://typesafe.ai) が Jev をリリースしてから世界的なブームになり、各社が色んなモデルを出しています。
 
+自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。
+
 きっかけは、Jev を使ってハーネスを作っていたことです。使っていたのは次のツールです。
 
 - [jev-lint](https://github.com/mizchi/jev-lint): コード規約を Jev で判定する lint
