@@ -18,7 +18,7 @@ https://mst-ja-decision-bench.masseater.dev
 
 https://github.com/masseater/mst-ja-decision-bench
 
-結果そのものはサイトを見てもらうとして、この記事では作ったきっかけと、作ってみて分かったことを書きます。
+結果そのものはサイトを見てもらうとして、この記事では作ったきっかけと、どう作ったかを書きます。
 
 ![概要ページ](/images/ja-decision-model-bench/top.png)
 
@@ -39,18 +39,15 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 となりました。
 なければ作ってみよう、ということで、勉強がてら作ってみました。結果として、英語よりも日本語のときの性能低下が顕著なことが分かったので、やってみて良かったなと思っています。
 
-## 作ってみて分かったこと
+## 作ってみた
 
-- **タスクによって順位がかなり入れ替わる**
-  - [JNLI](https://github.com/yahoojapan/JGLUE) では上位がほぼ横並びだが、規程を読ませる業務ルール判定では差が大きく開いた
-  - JNLI では中位以下の [Solar Decide](https://openrouter.ai/upstage/solar-decide) が、業務ルール判定では 2 位だった
-- **速度の差が桁違いのモデルがある**
-  - 多くのモデルは 1 判定 200〜500 ms 程度
-  - Solar Decide は業務ルール判定で p50 が約 18.7 秒、p95 が約 29 秒
-- **確信度が当てにならないモデルがある**
-  - span-01 lite は業務ルール判定で、確信度が上がっても正解率がほとんど上がらず、キャリブレーション曲線の全点が対角線より下(過信)だった
-- **有料版と無料版が同じものを返していた**
-  - 有料の [span-01](https://openrouter.ai/respan/span-01) と無料の span-01 lite は、全 2,934 問で答えも確率も完全に一致した
+- タスクは 2 つ
+  - [JNLI](https://github.com/yahoojapan/JGLUE): 2 文の関係を「含意・矛盾・中立」の 3 択で答える。valid の 2,434 件で、正解は人手ラベル
+  - 業務ルール判定: 架空の会社 25 社分の社内規程(各 8〜12 条)と事例 500 件で、規程に適合しているかを二値で答える。1 か所だけ変えて答えが逆になる事例の対にしている
+- 対象は [OpenRouter](https://openrouter.ai) 上の decision model 16 件
+- 採点は Jev Decision Index などの既存ベンチのやり方に揃えた
+
+本来ベンチマークは人間がちゃんとチェックすべきですが、流石に嫌なので、業務ルール判定のテストケースの作成は [Claude Opus 5.5](https://www.anthropic.com/claude/opus)(effort high)にやらせちゃってます。Opus の日本語性能はかなりトップクラス([Nejumi LLM リーダーボード](https://nejumi.ai) では前世代の Opus 5 が首位)なので参考にはなると思いますが、あくまで個人が試しに適当に作ってみた程度のものだということはご承知おきください。
 
 ## まとめ
 
