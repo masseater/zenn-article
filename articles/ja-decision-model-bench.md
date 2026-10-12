@@ -26,9 +26,17 @@ https://github.com/masseater/mst-ja-decision-bench
 
 decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。Jev、Liquid AI の d1、Perplexity の Decider などがあります。
 
-きっかけは、Jev を使ってハーネスを作っていたことです。
+きっかけは、Jev を使ってハーネスを作っていたことです。使っていたのは次のツールです。
 
-- コード規約を decision model に判定させる lint(jev-lint)を CI に入れていた
+- [jev-lint](https://github.com/mizchi/jev-lint): コード規約を Jev で判定する lint
+- [jev-pruner](https://github.com/tamaratran/jev-pruner): 長い Bash 出力を Jev で削ってからモデルに渡す Claude Code プラグイン
+- [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction): 要約の代わりに Jev の判定でコンテキストを削る Claude Code プラグイン
+- [jevgrep](https://github.com/nassim-arifette/jevgrep): Jev でコードを意味的に探す CLI
+- 自作のハーネス
+
+その中で、次のようなことがありました。
+
+- jev-lint を CI に入れて、コード規約を判定させていた
 - Jev は超激安だと分かってはいたものの、従量課金を使うのは心理的なハードルがあった
 - そこで、無料で使える span-01 lite で判定させていた
 - すると、Jev のときより明らかに誤検知が増えた
