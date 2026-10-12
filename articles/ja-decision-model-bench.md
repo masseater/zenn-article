@@ -24,7 +24,7 @@ https://github.com/masseater/mst-ja-decision-bench
 
 ## 作ったきっかけ
 
-decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。[TypeSafe](https://typesafe.ai) により Jev が 2026 年 9 月 15 日にリリースされて以降、世界的なブームが起こり、各社が色んなモデルを出しました。
+decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。2026 年 9 月 15 日に [TypeSafe](https://typesafe.ai) が Jev をリリースしてから世界的なブームになり、各社からさまざまなモデルが出ています。
 
 きっかけは、Jev を使ってハーネスを作っていたことです。使っていたのは次のツールです。
 
