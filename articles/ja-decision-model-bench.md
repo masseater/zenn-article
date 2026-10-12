@@ -60,4 +60,5 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - lint の設定は緩めず、そのルールの判定だけをベンチで 1 位だった [Decider V1.1 27B](https://openrouter.ai/perplexity/pplx-decider-v1.1-27b) に切り替えた
 - Decider は違反例を違反と判定し、既存の 95 ファイルはすべて違反なしと判定した
 
+となりました。
 また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
