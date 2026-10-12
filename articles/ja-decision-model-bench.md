@@ -36,6 +36,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - [Jev Decision Index](https://huggingface.co/spaces/multimodalart/jev-decision-index) など、decision model 向けのベンチマークはあるが、日本語のタスクがない
 - 日本語でいくつかのモデルを比較してみたものはあるが、現時点の decision model をまとめて体系的に測ったものは見つからなかった
 
+となりました。
 なければ作ってみよう、ということで、勉強がてら作ってみました。結果として、英語よりも日本語のときの性能低下が顕著なことが分かったので、やってみて良かったなと思っています。
 
 ## 作ってみて分かったこと
