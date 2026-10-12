@@ -35,9 +35,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - [jev-pruner](https://github.com/tamaratran/jev-pruner): 長い Bash 出力を Jev で削ってからモデルに渡す Claude Code プラグイン
 - [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction): 要約の代わりに Jev の判定でコンテキストを削る Claude Code プラグイン
 - [jevgrep](https://github.com/dzhng/jevgrep): Jev でコードを意味的に探す CLI
-- 自作のハーネス
-  - [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher): decision model に Claude Code のツール呼び出しや報告を採点させ、駄目ならフックで差し戻す Claude Code プラグイン
-  - [oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision): 自然文で書いたルールを decision model に判定させる Oxlint プラグイン
+- [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher): 自作のハーネス。decision model に Claude Code のツール呼び出しや報告を採点させ、駄目ならフックで差し戻す Claude Code プラグイン
 
 その中で、次のようなことがありました。
 
@@ -171,4 +169,4 @@ decision model は OpenRouter 上の十数個がすべてではなく、今後�
 
 日本語の decision model を体系的に測ったものがなかったので作ってみましたが、タスクによって順位が大きく入れ替わることや、無料モデルの誤検知がベンチでもはっきり出ることが分かりました。decision model は 1 判定あたりの費用が非常に安いので、自分の用途に近いタスクを作って測ってみるのもおすすめです。
 
-今後は OpenRouter 以外のプロバイダの decision model も足していきたいと思っています。
+今後は OpenRouter 以外のプロバイダの decision model も足していきたいと思っています。また、自然文で書いたルールを decision model に判定させる Oxlint プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
