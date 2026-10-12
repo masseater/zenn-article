@@ -34,8 +34,8 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - [jev-lint](https://github.com/mizchi/jev-lint): コード規約を Jev で判定する lint
 - [jev-pruner](https://github.com/tamaratran/jev-pruner): 長い Bash 出力を Jev で削ってからモデルに渡す Claude Code プラグイン
 - [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction): 要約の代わりに Jev の判定でコンテキストを削る Claude Code プラグイン
-- [jevgrep](https://github.com/nassim-arifette/jevgrep): Jev でコードを意味的に探す CLI
-- 自作のハーネス
+- [jevgrep](https://github.com/dzhng/jevgrep): Jev でコードを意味的に探す CLI
+- [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher): 自作のハーネス。decision model に Claude Code のツール呼び出しや報告を採点させ、駄目ならフックで差し戻す Claude Code プラグイン
 
 その中で、次のようなことがありました。
 
