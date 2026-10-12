@@ -41,18 +41,6 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 ## 作ってみた
 
-### JNLI は 200 件から全件にした
-
-初版の JNLI は 200 件でした。結果に 95% 信頼区間を付けると、正解率 70% 付近で ±6 ポイントほどの幅があり、モデル同士の差を見分けられませんでした。JNLI は人手の正解があるので件数を増やしても正解を付ける費用がかからず、valid の 2,434 件すべてに増やしました。
-
-### 業務ルール判定は作り直した
-
-初版は「条文 1 つと事例 1 つ」を渡す形でした。この形では「第 n 条」が飾りで、条文の組み合わせや例外を読む力を測れていませんでした。
-
-そこで、既存の decision model ベンチ(Jev Decision Index、[S1MB](https://github.com/hotchpotch/S1MB)、[DecideBench](https://github.com/choyiny/decidebench)、[JevBench](https://github.com/fstandhartinger/jevbench)、[Arize の比較](https://arize.com/blog/decision-model-benchmark/)、[AIM-Decision](https://aimultiple.com/system-one))を調べました。規程全体に対する適合判定はどれにもなく、DecideBench の「ほぼ同じ 2 つの事例の 1 か所だけを変えて答えを逆にした対にする」という作り方を取り入れました。話題語への反応ではなく、条文の読みを測るためです。規程は 1 テーマにつき 8〜12 条にして毎回全体を読ませ、事例は 2 つ以上の条を組み合わせないと判断できないものにしています。
-
-作り直す前後で同じモデル(span-01 lite)を測ると、skill は 40.9 から 12.2 に下がりました。
-
 ### hard の基準を増やした
 
 本来ベンチマークは人間がちゃんとチェックすべきですが、流石に嫌なので、業務ルール判定のテストケースの作成は [Claude Opus 5.5](https://www.anthropic.com/claude/opus)(effort high)にやらせちゃってます。[Opus の日本語性能はかなりトップクラス](https://nejumi.ai)(Nejumi LLM リーダーボードでは前世代の Opus 5 が首位)なので参考にはなると思いますが、あくまで個人が試しに適当に作ってみた程度のものだということはご承知おきください。
