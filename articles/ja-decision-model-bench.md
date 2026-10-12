@@ -51,7 +51,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - **有料版と無料版が同じものを返していた**
   - 有料の [span-01](https://openrouter.ai/respan/span-01) と無料の span-01 lite は、全 2,934 問で答えも確率も完全に一致した
 
-## 結局 lint は Decider に切り替えた
+## まとめ
 
 きっかけになった jev-lint の誤検知は、ベンチの結果とそのまま一致していました。
 
@@ -61,8 +61,4 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - lint の設定は緩めず、そのルールの判定だけをベンチで 1 位だった [Decider V1.1 27B](https://openrouter.ai/perplexity/pplx-decider-v1.1-27b) に切り替えた
 - Decider は違反例を違反と判定し、既存の 95 ファイルはすべて違反なしと判定した
 
-## おわりに
-
-日本語の decision model を体系的に測ったものがなかったので作ってみましたが、タスクによって順位が大きく入れ替わることや、無料モデルの誤検知がベンチでもはっきり出ることが分かりました。decision model は 1 判定あたりの費用が非常に安いので、自分の用途に近いタスクを作って測ってみるのもおすすめです。
-
-今後は [OpenRouter](https://openrouter.ai) 以外のプロバイダの decision model も足していきたいと思っています。また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
+また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
