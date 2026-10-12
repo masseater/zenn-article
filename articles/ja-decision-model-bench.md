@@ -18,7 +18,7 @@ https://masseater.dev/decision-bench
 
 https://github.com/masseater/mst-ja-decision-bench
 
-結果そのものはサイトを見てもらうとして、この記事では作ったきっかけと、作る途中で何を変えたかを書きます。
+結果そのものはサイトを見てもらうとして、この記事では作ったきっかけと、どう作ったかを書きます。
 
 ![概要ページ](/images/ja-decision-model-bench/top.png)
 
@@ -39,7 +39,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 となりました。
 なければ作ってみよう、ということで、勉強がてら作ってみました。
 
-## 作る途中で変えたこと
+## 作ってみた
 
 ### JNLI は 200 件から全件にした
 
