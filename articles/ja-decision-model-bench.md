@@ -2,7 +2,7 @@
 title: "decision model の日本語性能ベンチマークを勉強がてら作ってみた"
 emoji: "⚖️"
 type: "tech"
-topics: ["llm", "benchmark", "openrouter", "nlp", "decisionmodel"]
+topics: ["jev", "decisionmodel", "llm", "benchmark", "openrouter"]
 published: false
 ---
 
