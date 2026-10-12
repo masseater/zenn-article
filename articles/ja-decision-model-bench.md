@@ -18,7 +18,7 @@ https://mst-ja-decision-bench.masseater.dev
 
 https://github.com/masseater/mst-ja-decision-bench
 
-結果そのものはサイトを見てもらうとして、この記事では作ったきっかけと、作るときに工夫したこと、作ってみて分かったことを書きます。
+結果そのものはサイトを見てもらうとして、この記事では作ったきっかけと、作ってみて分かったことを書きます。
 
 ![概要ページ](/images/ja-decision-model-bench/top.png)
 
@@ -38,80 +38,10 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 なければ作ってみよう、ということで、勉強がてら作ってみました。厳密さよりも、まず一通り回すことを優先しています。
 
-## 工夫したところ
-
-### 採点は既存ベンチに寄せた
-
-自己流で採点せず、既存の decision model ベンチのやり方に寄せました。
-
-| ベンチ | 取り入れた点 |
-| --- | --- |
-| [Jev Decision Index](https://huggingface.co/spaces/multimodalart/jev-decision-index) | 未対応・エラーは 0 点で分母に入れる、全モデル同じ問題文、NLI は macro-F1 |
-| [S1MB](https://github.com/hotchpotch/S1MB) | chance 補正した skill、二値は balanced accuracy |
-| [DecideBench](https://github.com/choyiny/decidebench) | 最小差分ペアと対の正解率 |
-| [JevBench](https://github.com/fstandhartinger/jevbench) | p50・p95 レイテンシ、ECE と Brier |
-| [Arize の比較](https://arize.com/blog/decision-model-benchmark/) | 較正誤差を別に示す |
-| [AIM-Decision](https://aimultiple.com/system-one) | 費用と速度はスコアに混ぜず別の軸で示す |
-
-特に効いているのは次の点です。
-
-- **失敗を分母から外さない**: 答えられなかった問題を外すと、難しい問題だけ落とすモデルが得をする。未対応やエラーは 0 点にして、答えた割合は coverage として別に出す
-- **skill に揃える**: 3 択と二値では偶然当たる確率が違うので、ランダムに答えたときを 0 にした値で比べる
-- **信頼区間を付ける**: 件数が少ないと区間が広くモデルの差が見分けられないので、[JNLI](https://github.com/yahoojapan/JGLUE) は valid 全件(2,434 件)を使う
-- **キャリブレーションも見る**: 確率から ECE と Brier を出し、確信度と実際の正解率のグラフを描く
-
-### 業務ルール判定は最小差分ペアで作った
-
-業務ルール判定は、架空の会社 25 社分の社内規程と、それに対する事例 500 件で作った自作データです。話題語への反応ではなく、規程を読めているかを測れるようにしています。
-
-- 1 テーマにつき 8〜12 条の規程を作り、毎回その規程全体を読ませる
-- 事例は 2 つ以上の条を組み合わせないと判断できないものにする
-- DecideBench に倣い、ほぼ同じ 2 つの事例の 1 か所(金額、日付、役職、手続きの順序、例外の条件)だけを変えて答えを逆にした「対」にする
-- 対の両方に正解した割合を「対の正解率」として出す
-- 問いは「適合しているか」の肯定形に揃える(Arize の比較で否定形の問いが判定の逆転を招いていたため)
-- Cloudflare の [Clef](https://openrouter.ai/cloudflare/clef) 系は入力の先頭約 2,000 トークンしか読まないので、規程は 1,500 字以内に収める
-
-### 正解ラベルは 3 回聞いて割れたものを分けた
-
-業務ルール判定の正解は [Claude Opus 5.5](https://www.anthropic.com/claude/opus)(effort high)に付けさせています。
-
-- 1 問ごとに `claude -p` を構造化出力で 3 回独立に呼ぶ
-- 3 回とも一致し、かつ作るときに意図した答えと一致した問題だけを採点に使う
-- 票が割れた問題や、意図した答えと多数決が食い違う問題は hard として別集計にする
-
-業務ルール判定のスコアは「Opus 5.5 との一致率」でしかありません。目安として、JNLI では Opus 5.5 のラベルと人の正解の一致率(91.5%)も出しています。
-
-### Noul しか受け付けないモデルにも 3 択を解かせた
-
-span-01 系は「はい / いいえ」(Noul)しか受け付けません。Decision Index のルール通り未対応を 0 点にすると、JNLI では何も測れません。
-
-- 選択肢ごとに「次の答えは正しいですか: 含意」のような Noul の問いを作る
-- それらを 1 リクエストにまとめて送り、「はい」の確率が最大の選択肢を答えにする
-- 1 件 1 呼び出しなので、費用も他のモデルと揃う
-
-どの既存ベンチにも書かれていない独自のやり方なので、結果では `*` を付けて区別しています。
-
-### モデルが数十に増えても成り立つようにした
-
-decision model は [OpenRouter](https://openrouter.ai) 上の十数個がすべてではなく、今後も増えそうなので、モデル数が数十になっても破綻しない形にしています。
-
-- 呼び出しは当面 OpenRouter の SDK([`@openrouter/sdk`](https://www.npmjs.com/package/@openrouter/sdk) の `systemOne.create`)に一本化しつつ、モデルは `{ provider: "openrouter", id: "typesafe/jev-1.13" }` のように provider を含めて持つ
-- 応答は [Effect](https://effect.website) の `PersistedCache` で 1 件 1 ファイルにキャッシュし、モデルを足してもそのモデルの分だけ呼べば済むようにする
-- 表はソート可能にし、既定は上位 10 件で「すべて表示」とモデル名での絞り込みを付ける
-- 散布図はラベルの重なりを避け、ホバーでモデル名を出す
-
-### 費用は実測から見積もった
-
-- OpenRouter の API キーには月の利用上限をかけた
-- 新しいモデルを回す前に、実測済みモデルのトークン数と単価から見積を出し、承認してから回す
-- 新規 14 モデルを全件回したときは、見積 $1.74 に対して実費は約 $0.96 だった
-- Opus 5.5 でのラベル付けは API 換算だと 30 ドルを超えるが、サブスクリプション経由の `claude -p` なので実際の請求はない
-- OpenRouter の `:free` 付きモデルはアカウントのデータポリシー設定で拒否されたので、有料版を使った
-
 ## 作ってみて分かったこと
 
 - **タスクによって順位がかなり入れ替わる**
-  - JNLI では上位がほぼ横並びだが、規程を読ませる業務ルール判定では差が大きく開いた
+  - [JNLI](https://github.com/yahoojapan/JGLUE) では上位がほぼ横並びだが、規程を読ませる業務ルール判定では差が大きく開いた
   - JNLI では中位以下の [Solar Decide](https://openrouter.ai/upstage/solar-decide) が、業務ルール判定では 2 位だった
 - **速度の差が桁違いのモデルがある**
   - 多くのモデルは 1 判定 200〜500 ms 程度
@@ -135,4 +65,4 @@ decision model は [OpenRouter](https://openrouter.ai) 上の十数個がすべ�
 
 日本語の decision model を体系的に測ったものがなかったので作ってみましたが、タスクによって順位が大きく入れ替わることや、無料モデルの誤検知がベンチでもはっきり出ることが分かりました。decision model は 1 判定あたりの費用が非常に安いので、自分の用途に近いタスクを作って測ってみるのもおすすめです。
 
-今後は OpenRouter 以外のプロバイダの decision model も足していきたいと思っています。また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
+今後は [OpenRouter](https://openrouter.ai) 以外のプロバイダの decision model も足していきたいと思っています。また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
