@@ -24,14 +24,14 @@ https://github.com/masseater/mst-ja-decision-bench
 
 ## 作ったきっかけ
 
-decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。2026 年 9 月 15 日に [TypeSafe](https://typesafe.ai) が Jev をリリースしてから世界的なブームになり、各社が色んなモデルを出しています。
+decision model は、文章を生成せずに「どれを選ぶか」「はい / いいえの確率」だけを返すモデルです。2026 年 9 月 15 日に [TypeSafe](https://typesafe.ai) が [Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) をリリースしてから世界的なブームになり、各社が色んなモデルを出しています。
 
-自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。その革命に感動し、とりあえず Claude Code のハーネスに Jev を組み込み始めました。[jev-lint](https://github.com/mizchi/jev-lint)、[jev-pruner](https://github.com/tamaratran/jev-pruner)、[fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)、[jevgrep](https://github.com/dzhng/jevgrep) などを入れたり、自作の [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher) を作ったりしています。
+自分はタイムラインや友人がワイワイしているのを見て数日遅れで使い始めたのですが、使ってみてめちゃくちゃ革命を感じました。その革命に感動し、とりあえず [Claude Code](https://code.claude.com/docs) のハーネスに Jev を組み込み始めました。[jev-lint](https://github.com/mizchi/jev-lint)、[jev-pruner](https://github.com/tamaratran/jev-pruner)、[fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction)、[jevgrep](https://github.com/dzhng/jevgrep) などを入れたり、自作の [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher) を作ったりしています。
 
 その中で、
 
 - Jev は超激安だと分かってはいたものの、従量課金を使うのは心理的なハードルがあった
-- そこで無料で使える span-01 lite で判定させていたら、Jev のときより明らかに誤検知が増えた
+- そこで無料で使える [span-01 lite](https://openrouter.ai/respan/span-01-lite) で判定させていたら、Jev のときより明らかに誤検知が増えた
 
 日本語での性能がどれくらい違うのかを知りたくて、日本語のベンチマークを探しに行きました。
 
@@ -48,12 +48,12 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 | タスク | 形式 | 件数 | 正解 | 採点 |
 | --- | --- | ---: | --- | --- |
 | JNLI 含意関係 | 3 択 | 2,434 | 人手ラベル | macro-F1 |
-| 業務ルール判定 | 二値 | 500 | Claude Opus 5.5 | balanced accuracy、対の正解率 |
+| 業務ルール判定 | 二値 | 500 | [Claude Opus 5.5](https://www.anthropic.com/claude/opus) | balanced accuracy、対の正解率 |
 
-- **JNLI 含意関係**: JGLUE の JNLI v1.3 の valid 全件。2 文の関係を「含意・矛盾・中立」の 3 択で答えさせる
+- **JNLI 含意関係**: [JGLUE](https://github.com/yahoojapan/JGLUE) の JNLI v1.3 の valid 全件。2 文の関係を「含意・矛盾・中立」の 3 択で答えさせる
 - **業務ルール判定**: 架空の会社 25 社分の社内規程と、それに対する事例。規程に適合しているかを二値で答えさせる。lint のように「ルールに照らして判定する」使い方に近いタスクとして作った
 
-対象は OpenRouter 上の decision model 16 件です。
+対象は [OpenRouter](https://openrouter.ai) 上の decision model 16 件です。
 
 ## 工夫したところ
 
@@ -89,7 +89,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
   - 対の両方に正解した割合を「対の正解率」として出す
 - 細かい調整
   - 問いは「適合しているか」の肯定形に揃えた(Arize の比較で否定形の問いが判定の逆転を招いていたため)
-  - Cloudflare の Clef 系は入力の先頭約 2,000 トークンしか読まないので、規程は 1,500 字以内に収めた
+  - Cloudflare の [Clef](https://openrouter.ai/cloudflare/clef) 系は入力の先頭約 2,000 トークンしか読まないので、規程は 1,500 字以内に収めた
 
 作り直しの前後で span-01 lite を測ると、skill は 40.9 から 12.2 に下がり、対の正解率は 13.8% でした。最初の版は、規程を読む力ではなく話題語への反応を測っていたことになります。
 
@@ -118,8 +118,8 @@ span-01 系は「はい / いいえ」(Noul)しか受け付けません。Decisi
 
 decision model は OpenRouter 上の十数個がすべてではなく、今後も増えそうなので、モデル数が数十になっても破綻しない形にしています。
 
-- 呼び出しは当面 OpenRouter の SDK(`@openrouter/sdk` の `systemOne.create`)に一本化しつつ、モデルは `{ provider: "openrouter", id: "typesafe/jev-1.13" }` のように provider を含めて持つ
-- 応答は Effect の `PersistedCache` で 1 件 1 ファイルにキャッシュし、モデルを足してもそのモデルの分だけ呼べば済むようにする
+- 呼び出しは当面 OpenRouter の SDK([`@openrouter/sdk`](https://www.npmjs.com/package/@openrouter/sdk) の `systemOne.create`)に一本化しつつ、モデルは `{ provider: "openrouter", id: "typesafe/jev-1.13" }` のように provider を含めて持つ
+- 応答は [Effect](https://effect.website) の `PersistedCache` で 1 件 1 ファイルにキャッシュし、モデルを足してもそのモデルの分だけ呼べば済むようにする
 - 表はソート可能にし、既定は上位 10 件で「すべて表示」とモデル名での絞り込みを付ける
 - 散布図はラベルの重なりを避け、ホバーでモデル名を出す
 
@@ -135,14 +135,14 @@ decision model は OpenRouter 上の十数個がすべてではなく、今後�
 
 - **タスクによって順位がかなり入れ替わる**
   - JNLI では上位がほぼ横並びだが、規程を読ませる業務ルール判定では差が大きく開いた
-  - JNLI では中位以下の Solar Decide が、業務ルール判定では 2 位だった
+  - JNLI では中位以下の [Solar Decide](https://openrouter.ai/upstage/solar-decide) が、業務ルール判定では 2 位だった
 - **速度の差が桁違いのモデルがある**
   - 多くのモデルは 1 判定 200〜500 ms 程度
   - Solar Decide は業務ルール判定で p50 が約 18.7 秒、p95 が約 29 秒
 - **確信度が当てにならないモデルがある**
   - span-01 lite は業務ルール判定で、確信度が上がっても正解率がほとんど上がらず、キャリブレーション曲線の全点が対角線より下(過信)だった
 - **有料版と無料版が同じものを返していた**
-  - 有料の span-01 と無料の span-01 lite は、全 2,934 問で答えも確率も完全に一致した
+  - 有料の [span-01](https://openrouter.ai/respan/span-01) と無料の span-01 lite は、全 2,934 問で答えも確率も完全に一致した
 
 ## 結局 lint は Decider に切り替えた
 
@@ -151,11 +151,11 @@ decision model は OpenRouter 上の十数個がすべてではなく、今後�
 - span-01 lite はベンチで最下位(両タスクとも skill 11〜12)
 - jev-lint では、UI 状態を持たない純粋関数を「UI 状態の扱いの規約違反」と誤検知して CI が落ちた
 - span-01 lite に違反例と違反でない例を判定させると、両者をほとんど区別できなかった
-- lint の設定は緩めず、そのルールの判定だけをベンチで 1 位だった Decider V1.1 27B に切り替えた
+- lint の設定は緩めず、そのルールの判定だけをベンチで 1 位だった [Decider V1.1 27B](https://openrouter.ai/perplexity/pplx-decider-v1.1-27b) に切り替えた
 - Decider は違反例を違反と判定し、既存の 95 ファイルはすべて違反なしと判定した
 
 ## おわりに
 
 日本語の decision model を体系的に測ったものがなかったので作ってみましたが、タスクによって順位が大きく入れ替わることや、無料モデルの誤検知がベンチでもはっきり出ることが分かりました。decision model は 1 判定あたりの費用が非常に安いので、自分の用途に近いタスクを作って測ってみるのもおすすめです。
 
-今後は OpenRouter 以外のプロバイダの decision model も足していきたいと思っています。また、自然文で書いたルールを decision model に判定させる Oxlint プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
+今後は OpenRouter 以外のプロバイダの decision model も足していきたいと思っています。また、自然文で書いたルールを decision model に判定させる [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) プラグイン([oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision))も作っている最中です。
