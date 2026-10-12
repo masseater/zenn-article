@@ -1,5 +1,5 @@
 ---
-title: "勉強がてら日本語の decision model ベンチマークを作ってみた"
+title: "decision model の日本語性能ベンチマークを勉強がてら作ってみた"
 emoji: "⚖️"
 type: "tech"
 topics: ["llm", "benchmark", "openrouter", "nlp", "decisionmodel"]
