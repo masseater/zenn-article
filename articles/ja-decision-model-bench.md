@@ -35,7 +35,9 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 - [jev-pruner](https://github.com/tamaratran/jev-pruner): 長い Bash 出力を Jev で削ってからモデルに渡す Claude Code プラグイン
 - [fast-jev-compaction](https://github.com/tamaratran/fast-jev-compaction): 要約の代わりに Jev の判定でコンテキストを削る Claude Code プラグイン
 - [jevgrep](https://github.com/dzhng/jevgrep): Jev でコードを意味的に探す CLI
-- [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher): 自作のハーネス。decision model に Claude Code のツール呼び出しや報告を採点させ、駄目ならフックで差し戻す Claude Code プラグイン
+- 自作のハーネス
+  - [cc-jev-teacher](https://github.com/masseater/cc-jev-teacher): decision model に Claude Code のツール呼び出しや報告を採点させ、駄目ならフックで差し戻す Claude Code プラグイン
+  - [oxlint-plugin-decision](https://github.com/masseater/oxlint-plugin-decision): 自然文で書いたルールを decision model に判定させる Oxlint プラグイン
 
 その中で、次のようなことがありました。
 
