@@ -38,20 +38,6 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 なければ作ってみよう、ということで、勉強がてら作ってみました。厳密さよりも、まず一通り回すことを優先しています。
 
-## 何を測ったか
-
-タスクは 2 つで、性質が違うのでサイトでもページを分けています。
-
-| タスク | 形式 | 件数 | 正解 | 採点 |
-| --- | --- | ---: | --- | --- |
-| JNLI 含意関係 | 3 択 | 2,434 | 人手ラベル | macro-F1 |
-| 業務ルール判定 | 二値 | 500 | [Claude Opus 5.5](https://www.anthropic.com/claude/opus) | balanced accuracy、対の正解率 |
-
-- **JNLI 含意関係**: [JGLUE](https://github.com/yahoojapan/JGLUE) の JNLI v1.3 の valid 全件。2 文の関係を「含意・矛盾・中立」の 3 択で答えさせる
-- **業務ルール判定**: 架空の会社 25 社分の社内規程と、それに対する事例。規程に適合しているかを二値で答えさせる。lint のように「ルールに照らして判定する」使い方に近いタスクとして作った
-
-対象は [OpenRouter](https://openrouter.ai) 上の decision model 16 件です。
-
 ## 工夫したところ
 
 ### 採点は既存ベンチに寄せた
@@ -71,7 +57,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 - **失敗を分母から外さない**: 答えられなかった問題を外すと、難しい問題だけ落とすモデルが得をする。未対応やエラーは 0 点にして、答えた割合は coverage として別に出す
 - **skill に揃える**: 3 択と二値では偶然当たる確率が違うので、ランダムに答えたときを 0 にした値で比べる
-- **信頼区間を付ける**: JNLI は最初 200 件で回していたが、正解率 70% 付近で区間が ±6 ポイントほどあり差が見分けられなかったので、valid 全件に増やした
+- **信頼区間を付ける**: [JNLI](https://github.com/yahoojapan/JGLUE) は最初 200 件で回していたが、正解率 70% 付近で区間が ±6 ポイントほどあり差が見分けられなかったので、valid 全件に増やした
 - **キャリブレーションも見る**: 確率から ECE と Brier を出し、確信度と実際の正解率のグラフを描く
 
 ### 業務ルール判定は最小差分ペアで作った
@@ -92,7 +78,7 @@ decision model は、文章を生成せずに「どれを選ぶか」「はい /
 
 ### 正解ラベルは 3 回聞いて割れたものを分けた
 
-業務ルール判定の正解は Opus 5.5(effort high)に付けさせています。
+業務ルール判定の正解は [Claude Opus 5.5](https://www.anthropic.com/claude/opus)(effort high)に付けさせています。
 
 - 1 問ごとに `claude -p` を構造化出力で 3 回独立に呼ぶ
 - 3 回とも一致したものだけを採点に使い、割れたものは hard として別集計にする
@@ -113,7 +99,7 @@ span-01 系は「はい / いいえ」(Noul)しか受け付けません。Decisi
 
 ### モデルが数十に増えても成り立つようにした
 
-decision model は OpenRouter 上の十数個がすべてではなく、今後も増えそうなので、モデル数が数十になっても破綻しない形にしています。
+decision model は [OpenRouter](https://openrouter.ai) 上の十数個がすべてではなく、今後も増えそうなので、モデル数が数十になっても破綻しない形にしています。
 
 - 呼び出しは当面 OpenRouter の SDK([`@openrouter/sdk`](https://www.npmjs.com/package/@openrouter/sdk) の `systemOne.create`)に一本化しつつ、モデルは `{ provider: "openrouter", id: "typesafe/jev-1.13" }` のように provider を含めて持つ
 - 応答は [Effect](https://effect.website) の `PersistedCache` で 1 件 1 ファイルにキャッシュし、モデルを足してもそのモデルの分だけ呼べば済むようにする
